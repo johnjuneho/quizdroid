@@ -20,8 +20,8 @@ class TopicOverviewActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val topicName = intent.getStringExtra("topicName") ?: "Unknown"
-        val topicDescription = intent.getStringExtra("topicDescription") ?: "No description available."
-        val totalQuestions = intent.getIntExtra("totalQuestions", 0)
+
+        val topic = (application as QuizApp).topicRepository.getTopics().find { it.name == topicName }
 
         setContent {
             QuizdroidTheme {
@@ -29,14 +29,19 @@ class TopicOverviewActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TopicOverview(
-                        topicName = topicName,
-                        topicDescription = topicDescription,
-                        totalQuestions = totalQuestions,
-                        onBeginClicked = {
-                            startActivity(Intent(this, QuestionActivity::class.java))
-                        }
-                    )
+                    topic?.let {
+                        TopicOverview(
+                            topicName = it.name,
+                            topicDescription = it.longDescription,
+                            totalQuestions = it.questions.size,
+                            onBeginClicked = {
+                                val intent = Intent(this@TopicOverviewActivity, QuestionActivity::class.java).apply {
+                                    putExtra("topicName", it.name)
+                                }
+                                startActivity(intent)
+                            }
+                        )
+                    }
                 }
             }
         }

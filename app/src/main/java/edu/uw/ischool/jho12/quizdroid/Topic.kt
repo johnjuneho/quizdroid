@@ -1,3 +1,9 @@
 package edu.uw.ischool.jho12.quizdroid
 
-data class Topic(val name: String, val description: String, val totalQuestions: Int)
+data class Topic(
+    val name: String,
+    val shortDescription: String,
+    val longDescription: String,
+    val questions: List<Question>
+)
+

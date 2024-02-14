@@ -20,10 +20,18 @@ class AnswerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val selectedAnswer = intent.getStringExtra("selectedAnswer") ?: ""
-        val correctAnswer = intent.getStringExtra("correctAnswer") ?: ""
+        val topicName = intent.getStringExtra("topicName") ?: ""
         val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0)
-        val totalQuestions = intent.getIntExtra("totalQuestions", 0)
-        val correctAnswers = intent.getIntExtra("correctAnswers", 0) + if (selectedAnswer == correctAnswer) 1 else 0
+        var correctAnswers = intent.getIntExtra("correctAnswers", 0)
+
+        val topic = (application as QuizApp).topicRepository.getTopics().find { it.name == topicName }
+        val question = topic?.questions?.getOrNull(currentQuestionIndex)
+        val correctAnswer = question?.correctAnswer ?: ""
+        val totalQuestions = topic?.questions?.size ?: 0
+
+        if (selectedAnswer == correctAnswer) {
+            correctAnswers++
+        }
 
         setContent {
             QuizdroidTheme {
@@ -38,10 +46,10 @@ class AnswerActivity : ComponentActivity() {
                         totalQuestions = totalQuestions,
                         correctAnswers = correctAnswers,
                         onNext = {
-                            val intent = if (currentQuestionIndex < totalQuestions - 1) {
+                            val intent = if (currentQuestionIndex + 1 < totalQuestions) {
                                 Intent(this@AnswerActivity, QuestionActivity::class.java).apply {
+                                    putExtra("topicName", topicName)
                                     putExtra("currentQuestionIndex", currentQuestionIndex + 1)
-                                    putExtra("totalQuestions", totalQuestions)
                                     putExtra("correctAnswers", correctAnswers)
                                 }
                             } else {
@@ -72,7 +80,7 @@ fun AnswerScreen(
         Text(text = "Correct Answer: $correctAnswer", style = MaterialTheme.typography.bodyLarge)
         Text(text = "You have $correctAnswers out of $totalQuestions correct", style = MaterialTheme.typography.bodyLarge)
         Button(onClick = onNext, modifier = Modifier.padding(top = 16.dp)) {
-            Text(if (currentQuestionIndex < totalQuestions - 1) "Next" else "Finish")
+            Text(if (currentQuestionIndex + 1 < totalQuestions) "Next" else "Finish")
         }
     }
 }

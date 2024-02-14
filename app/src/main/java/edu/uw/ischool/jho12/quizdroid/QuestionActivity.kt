@@ -22,34 +22,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import edu.uw.ischool.jho12.quizdroid.ui.theme.QuizdroidTheme
 import androidx.compose.foundation.layout.Row
+import android.widget.Toast
 
 class QuestionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0) // Default to first question
-        val question = questions[currentQuestionIndex]
+        val topicName = intent.getStringExtra("topicName") ?: ""
+        val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0)
 
-        setContent {
-            QuizdroidTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    QuestionPage(question = question.question, answers = question.answers, onSubmit = { selectedAnswer ->
-                        val intent = Intent(this, AnswerActivity::class.java).apply {
-                            putExtra("selectedAnswer", selectedAnswer)
-                            putExtra("correctAnswer", question.correctAnswer)
-                            putExtra("currentQuestionIndex", currentQuestionIndex)
-                            putExtra("totalQuestions", questions.size)
-                        }
-                        startActivity(intent)
-                    })
+        val topicRepository = (application as QuizApp).topicRepository
+        val topic = topicRepository.getTopics().find { it.name == topicName }
+        val question = topic?.questions?.getOrNull(currentQuestionIndex)
+
+        if (question != null) {
+            setContent {
+                QuizdroidTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        QuestionPage(question = question.question, answers = question.answers, onSubmit = { selectedAnswer ->
+                            val intent = Intent(this, AnswerActivity::class.java).apply {
+                                putExtra("selectedAnswer", selectedAnswer)
+                                putExtra("correctAnswer", question.correctAnswer)
+                                putExtra("currentQuestionIndex", currentQuestionIndex)
+                                putExtra("totalQuestions", topic.questions.size)
+                                putExtra("topicName", topicName)
+                            }
+                            startActivity(intent)
+                        })
+                    }
                 }
             }
+        } else {
+            Toast.makeText(this, "Error loading question. Please try again.", Toast.LENGTH_LONG).show()
+            finish()
         }
     }
 
-    override fun onBackPressed() {
+
+override fun onBackPressed() {
         val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0)
         if (currentQuestionIndex == 0) {
             Intent(this, MainActivity::class.java).also { mainActivityIntent ->
