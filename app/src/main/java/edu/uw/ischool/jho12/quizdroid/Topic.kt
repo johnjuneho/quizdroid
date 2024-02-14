@@ -4,6 +4,6 @@ data class Topic(
     val name: String,
     val shortDescription: String,
     val longDescription: String,
-    val questions: List<Question>
+    val questions: List<Question>,
+    val iconResId: Int
 )
-

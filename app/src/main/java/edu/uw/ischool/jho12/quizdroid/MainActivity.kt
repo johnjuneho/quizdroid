@@ -15,6 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.res.painterResource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +60,6 @@ fun QuizTopicsList() {
         }
     }
 }
-
 @Composable
 fun TopicCard(topic: Topic, onClick: () -> Unit) {
     Card(
@@ -66,16 +68,23 @@ fun TopicCard(topic: Topic, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = topic.name,
-                style = MaterialTheme.typography.headlineSmall
+        Row(modifier = Modifier.padding(16.dp)) {
+            Image(
+                painter = painterResource(id = topic.iconResId),
+                contentDescription = "${topic.name} icon",
+                modifier = Modifier.padding(end = 16.dp)
             )
-            Text(
-                text = topic.shortDescription,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+            Column {
+                Text(
+                    text = topic.name,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    text = topic.shortDescription,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
     }
     Divider()
