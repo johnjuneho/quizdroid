@@ -19,9 +19,10 @@ import edu.uw.ischool.jho12.quizdroid.ui.theme.QuizdroidTheme
 class TopicOverviewActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val topicName = intent.getStringExtra("topicName") ?: "Unknown"
+        val topicTitle = intent.getStringExtra("topicName") ?: "Unknown"
 
-        val topic = (application as QuizApp).topicRepository.getTopics().find { it.name == topicName }
+        // Find the topic by title instead of name
+        val topic = (application as QuizApp).topicRepository.getTopics().find { it.title == topicTitle }
 
         setContent {
             QuizdroidTheme {
@@ -31,12 +32,12 @@ class TopicOverviewActivity : ComponentActivity() {
                 ) {
                     topic?.let {
                         TopicOverview(
-                            topicName = it.name,
-                            topicDescription = it.longDescription,
+                            topicName = it.title,
+                            topicDescription = it.desc,
                             totalQuestions = it.questions.size,
                             onBeginClicked = {
                                 val intent = Intent(this@TopicOverviewActivity, QuestionActivity::class.java).apply {
-                                    putExtra("topicName", it.name)
+                                    putExtra("topicName", it.title)
                                 }
                                 startActivity(intent)
                             }

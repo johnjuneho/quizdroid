@@ -1,7 +1,7 @@
 package edu.uw.ischool.jho12.quizdroid
 
 data class Question(
-    val question: String,
+    val text: String,
     val answers: List<String>,
-    val correctAnswer: String
+    val answer: Int
 )

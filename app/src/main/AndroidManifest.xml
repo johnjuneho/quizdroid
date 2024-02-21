@@ -30,6 +30,10 @@
         </activity>
         <activity android:name=".QuestionActivity" />
         <activity android:name=".AnswerActivity" />
+        <activity
+            android:name=".PreferencesActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        </activity>
     </application>
 
 </manifest>

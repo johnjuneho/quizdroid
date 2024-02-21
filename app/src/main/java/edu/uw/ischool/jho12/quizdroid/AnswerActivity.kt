@@ -24,12 +24,12 @@ class AnswerActivity : ComponentActivity() {
         val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0)
         var correctAnswers = intent.getIntExtra("correctAnswers", 0)
 
-        val topic = (application as QuizApp).topicRepository.getTopics().find { it.name == topicName }
+        val topic = (application as QuizApp).topicRepository.getTopics().find { it.title == topicName }
         val question = topic?.questions?.getOrNull(currentQuestionIndex)
-        val correctAnswer = question?.correctAnswer ?: ""
+        val correctAnswerText = question?.answers?.get(question.answer) ?: ""
         val totalQuestions = topic?.questions?.size ?: 0
 
-        if (selectedAnswer == correctAnswer) {
+        if (selectedAnswer == correctAnswerText) {
             correctAnswers++
         }
 
@@ -41,7 +41,7 @@ class AnswerActivity : ComponentActivity() {
                 ) {
                     AnswerScreen(
                         selectedAnswer = selectedAnswer,
-                        correctAnswer = correctAnswer,
+                        correctAnswer = correctAnswerText,
                         currentQuestionIndex = currentQuestionIndex,
                         totalQuestions = totalQuestions,
                         correctAnswers = correctAnswers,

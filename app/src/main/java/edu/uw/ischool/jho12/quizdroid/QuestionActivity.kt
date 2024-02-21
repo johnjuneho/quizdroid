@@ -31,7 +31,7 @@ class QuestionActivity : ComponentActivity() {
         val currentQuestionIndex = intent.getIntExtra("currentQuestionIndex", 0)
 
         val topicRepository = (application as QuizApp).topicRepository
-        val topic = topicRepository.getTopics().find { it.name == topicName }
+        val topic = topicRepository.getTopics().find { it.title == topicName }
         val question = topic?.questions?.getOrNull(currentQuestionIndex)
 
         if (question != null) {
@@ -41,19 +41,23 @@ class QuestionActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        QuestionPage(question = question.question, answers = question.answers, onSubmit = { selectedAnswer ->
-                            val intent = Intent(this, AnswerActivity::class.java).apply {
-                                putExtra("selectedAnswer", selectedAnswer)
-                                putExtra("correctAnswer", question.correctAnswer)
-                                putExtra("currentQuestionIndex", currentQuestionIndex)
-                                putExtra("totalQuestions", topic.questions.size)
-                                putExtra("topicName", topicName)
-                            }
-                            startActivity(intent)
-                        })
+                        question?.let {
+                            QuestionPage(question = it.text, answers = it.answers, onSubmit = { selectedAnswer ->
+                                val correctAnswerText = it.answers[it.answer]
+                                val intent = Intent(this, AnswerActivity::class.java).apply {
+                                    putExtra("selectedAnswer", selectedAnswer)
+                                    putExtra("correctAnswer", correctAnswerText)
+                                    putExtra("currentQuestionIndex", currentQuestionIndex)
+                                    putExtra("totalQuestions", topic?.questions?.size ?: 0)
+                                    putExtra("topicName", topicName)
+                                }
+                                startActivity(intent)
+                            })
+                        }
                     }
                 }
             }
+
         } else {
             Toast.makeText(this, "Error loading question. Please try again.", Toast.LENGTH_LONG).show()
             finish()

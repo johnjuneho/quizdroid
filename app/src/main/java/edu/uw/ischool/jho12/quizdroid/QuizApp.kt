@@ -8,8 +8,7 @@ class QuizApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        topicRepository = InMemoryTopicRepository()
-        Log.d("QuizApp", "QuizApp is running")
+        topicRepository = JsonTopicRepository(this)
     }
 
     companion object {
@@ -17,4 +16,5 @@ class QuizApp : Application() {
             private set
     }
 }
+
 
