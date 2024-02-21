@@ -57,6 +57,8 @@ android {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("com.google.code.gson:gson:2.8.8")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.core:core-ktx:1.12.0")
